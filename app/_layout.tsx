@@ -1,39 +1,50 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { Stack, Slot, Link, usePathname } from 'expo-router';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialIcons, Entypo } from '@expo/vector-icons';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  const pathname = usePathname();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <View style={{ flex: 1 }}>
+      {/* Main content of each screen */}
+      <Slot />
+
+      {/* Global Bottom Navigation */}
+      { // optional: hide on specific routes
+        <View style={styles.bottomBar}>
+          <Link href="/flashcards" asChild>
+            <TouchableOpacity>
+              <MaterialIcons name="photo-camera" size={32} />
+            </TouchableOpacity>
+          </Link>
+
+          <TouchableOpacity style={styles.captureButton} />
+
+          <TouchableOpacity>
+            <Entypo name="cycle" size={32} />
+          </TouchableOpacity>
+        </View>
+      }
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  bottomBar: {
+    backgroundColor: '#abc',
+    width: '100%',
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  captureButton: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+});
