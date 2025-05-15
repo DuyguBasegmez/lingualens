@@ -1,31 +1,35 @@
 import { Stack, Slot, Link, usePathname } from 'expo-router';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { MaterialIcons, Entypo } from '@expo/vector-icons';
+import { MaterialIcons,MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 
 export default function RootLayout() {
   const pathname = usePathname();
 
+  // hangi route’larda gizleyeceğiz
+  const hideOn = ['/settings', '/profile'];
+
   return (
     <View style={{ flex: 1 }}>
-      {/* Main content of each screen */}
+      {/* Main content */}
       <Slot />
 
       {/* Global Bottom Navigation */}
-      { // optional: hide on specific routes
+      { !hideOn.includes(pathname) && (
         <View style={styles.bottomBar}>
           <Link href="/flashcards" asChild>
             <TouchableOpacity>
-              <MaterialIcons name="photo-camera" size={32} />
+             <MaterialCommunityIcons name="cards" size={32} color="black" />
             </TouchableOpacity>
           </Link>
 
           <TouchableOpacity style={styles.captureButton} />
-
+          <Link href="/profile" asChild>
           <TouchableOpacity>
-            <Entypo name="cycle" size={32} />
+          <Ionicons name="person-outline" size={24} color="black" />
           </TouchableOpacity>
+          </Link>
         </View>
-      }
+      )}
     </View>
   );
 }
